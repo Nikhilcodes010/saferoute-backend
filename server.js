@@ -8,7 +8,12 @@ require("dotenv").config();
 const app = express();
 
 // Middlewares
-app.use(cors());                // Allows cross-origin requests
+// Allow frontend origin (adjust if you use localhost or 127.0.0.1)
+app.use(cors({
+  origin: ["http://127.0.0.1:8080", "http://localhost:8080"],
+  credentials: true
+}));
+
 app.use(express.json());       // Parses incoming JSON requests
 
 // Routes
