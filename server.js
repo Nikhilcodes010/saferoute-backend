@@ -1,35 +1,35 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// Initialize the Express app
 const app = express();
 
-// Middlewares
-// Allow frontend origin (adjust if you use localhost or 127.0.0.1)
+const allowedOrigins = [
+  "http://127.0.0.1:8080",
+  "http://localhost:8080",
+  "https://saferoute-frontend.vercel.app"
+];
 
 app.use(cors({
-  origin: [
-    "http://127.0.0.1:8080",
-    "http://localhost:8080",
-    "https://saferoute-frontend.vercel.app"
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
 
+// Handle preflight (OPTIONS) requests
+app.options("*", cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
-app.use(express.json());       // Parses incoming JSON requests
+app.use(express.json());
 
-// Routes
-app.use("/api/auth", require("./routes/auth"));  // To be created
-app.use("/api/zones", require("./routes/zones")); // To be created
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/zones", require("./routes/zones"));
 
-// Connect to MongoDB and Start Server
 mongoose.connect(process.env.MONGO_URI)
-.then(() => {
+  .then(() => {
     console.log("Connected to MongoDB");
     app.listen(5000, () => console.log("Server running on http://localhost:5000"));
-})
-.catch(err => console.error("DB connection error:", err));
+  })
+  .catch(err => console.error("DB connection error:", err));
